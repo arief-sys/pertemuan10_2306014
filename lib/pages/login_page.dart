@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pertemuan10_2306014/pages/home_page.dart';
+import 'home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
@@ -10,12 +10,10 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _formKey = GlobalKey<FormState>();
-
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
-  bool isObscure = true;
+  final _formKey = GlobalKey<FormState>();
+  bool _obscurePassword = true;
 
   Future<void> login() async {
     if (_formKey.currentState!.validate()) {
@@ -24,18 +22,12 @@ class _LoginPageState extends State<LoginPage> {
       await prefs.setBool("isLogin", true);
       await prefs.setString("username", usernameController.text);
 
+      if (!mounted) return;
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const HomePage()),
       );
     }
-  }
-
-  @override
-  void dispose() {
-    usernameController.dispose();
-    passwordController.dispose();
-    super.dispose();
   }
 
   @override
@@ -57,25 +49,8 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(
-                      Icons.lock_person,
-                      size: 80,
-                      color: Colors.pink,
-                    ),
-
+                    const Icon(Icons.person, size: 80, color: Colors.indigoAccent),
                     const SizedBox(height: 20),
-
-                    const Text(
-                      "Login",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // Username
                     TextFormField(
                       controller: usernameController,
                       decoration: InputDecoration(
@@ -86,34 +61,28 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value == null || value.trim().isEmpty) {
                           return "Username tidak boleh kosong";
-                        }
-                        if (value.length < 4) {
-                          return "Username minimal 4 karakter";
                         }
                         return null;
                       },
                     ),
-
                     const SizedBox(height: 15),
-
-                    // Password
                     TextFormField(
                       controller: passwordController,
-                      obscureText: isObscure,
+                      obscureText: _obscurePassword,
                       decoration: InputDecoration(
                         labelText: "Password",
                         prefixIcon: const Icon(Icons.lock),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            isObscure
-                                ? Icons.visibility
-                                : Icons.visibility_off,
+                            _obscurePassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
                           ),
                           onPressed: () {
                             setState(() {
-                              isObscure = !isObscure;
+                              _obscurePassword = !_obscurePassword;
                             });
                           },
                         ),
@@ -125,32 +94,28 @@ class _LoginPageState extends State<LoginPage> {
                         if (value == null || value.isEmpty) {
                           return "Password tidak boleh kosong";
                         }
-                        if (value.length < 5) {
-                          return "Password minimal 5 karakter";
+                        int digitCount = RegExp(r'[0-9]').allMatches(value).length;
+                        if (digitCount < 5) {
+                          return "Password minimal harus terdiri dari 5 angka";
                         }
                         return null;
                       },
                     ),
-
                     const SizedBox(height: 20),
-
                     SizedBox(
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
                         onPressed: login,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.purple,
+                          backgroundColor: Colors.blue,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                         child: const Text(
-                          "LOGIN",
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.white,
-                          ),
+                          "login",
+                          style: TextStyle(fontSize: 16, color: Colors.white),
                         ),
                       ),
                     ),

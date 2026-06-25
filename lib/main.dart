@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pertemuan10_2306014/pages/login_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'pages/login_page.dart';
 import 'pages/home_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const MyApp());
